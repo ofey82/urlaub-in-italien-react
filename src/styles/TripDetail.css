@@ -9,7 +9,7 @@ body {
     height: 100vh;
 }
 
-.trip-detail-container {
+.trip-container {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
@@ -26,73 +26,92 @@ body {
 .trip-title {
     font-size: 48px;
     font-weight: bold;
+    margin-bottom: 16px;
 }
 
-.trip-details {
-    font-size: 14px;
-    color: black;
-    margin-bottom: 40px;
-}
-
-.edit-button {
+.edit-button, .upload-button {
+    display: inline-block;
     margin-left: auto;
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 14px;
     background-color: white;
-    color: black;
-    border: 1px solid black;
+    border: 1px solid #ddd;
     border-radius: 5px;
     cursor: pointer;
 }
 
-.edit-button:hover {
+.edit-button:hover, .upload-button:hover {
     background-color: #CCF381;
     border: 1px solid #CCF381;
 }
 
-.trip-actions {
+.photo-upload {
+    display: inline-block;
+    vertical-align: middle;
+}
+.photo-upload input[type="file"] {
+    display: none;
+}
+
+.trip-period-participant-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+    gap:16px;
+}
+
+.trip-icon-period {
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.trip-icon-participant {
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.trip-description {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.trip-highlights {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 14px;
+    font-style: italic;
+    margin-bottom: 10px;
+    gap: 8px;
+}
+
+.trip-content-container {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.upload-button,
-.story-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.upload-button {
-    background-color: #007bff;
-    color: white;
-}
-
-.upload-button:hover {
-    background-color: #0056b3;
-}
-
-.story-button {
-    background-color: #28a745;
-    color: white;
-}
-
-.story-button:hover {
-    background-color: #218838;
-}
-
-.trip-content {
-    display: flex;
-    justify-content: space-between;
+    margin-top: 20px;
 }
 
 .photo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 8px;
-    width: 55%;
+    width: 100%;
+}
+
+.photo-grid img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.photo-item {
+    position: relative;
 }
 
 .photo-grid .photo {
@@ -105,43 +124,12 @@ body {
     padding-bottom: 100%;
 }
 
-.story-list {
-    width: 35%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.story-item {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 0px;
+.photo-icon {
+    position: absolute;
+    top: 5px;
+    right: 16px;
+    font-size: 16px;
+    color: white;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.story-text {
-    margin: 0;
-}
-
-.story-title {
-    margin: 0;
-}
-
-.story-item:hover {
-    background-color: #f1f1f1;
-}
-
-.story-photos {
-    display: flex;
-    gap: 5px;
-    margin-top: 0px;
-}
-
-.story-photos img {
-    width: 24px;
-    height: 24px;
-    object-fit: cover;
-    border-radius: 5px;
+    z-index: 1;
 }

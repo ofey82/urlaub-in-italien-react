@@ -23,45 +23,50 @@ const EditTripModal = ({ trip, onClose, onSave }) => {
   };
 
   return (
-      <div className="modal-overlay">
-        <div className="modal-content">
-          <h2>Edit Trip</h2>
-          <input
-              type="text"
-              placeholder="Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-          />
-          <textarea
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-          />
-          <input
-              type="text"
-              placeholder="Participants"
-              value={participants}
-              onChange={(e) => setParticipants(e.target.value)}
-          />
-          <input
-              type="date"
-              placeholder="Start Date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-          />
-          <input
-              type="date"
-              placeholder="End Date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-          />
-          <textarea
-              placeholder="Highlights"
-              value={highlights}
-              onChange={(e) => setHighlights(e.target.value)}
-          />
-          <button onClick={handleSave}>Save</button>
-          <button onClick={onClose}>Close</button>
+      <div className="trip-modal-overlay">
+        <div className="trip-modal-content">
+          <h2>Edit Your Trip</h2>
+          <div className="trip-modal-body">
+            <input
+                type="text"
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+            />
+            <textarea
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+            />
+            <input
+                type="text"
+                placeholder="Participants"
+                value={participants}
+                onChange={(e) => setParticipants(e.target.value)}
+            />
+            <input
+                type="date"
+                placeholder="Start Date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+            />
+            <input
+                type="date"
+                placeholder="End Date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+            />
+            <textarea
+                placeholder="Highlights"
+                value={highlights}
+                onChange={(e) => setHighlights(e.target.value)}
+            />
+            <div className="trip-modal-buttons">
+              <button className="save-trip" onClick={handleSave}>Save</button>
+              <button className="close-trip" onClick={onClose}>Close</button>
+            </div>
+          </div>
+
         </div>
       </div>
   );

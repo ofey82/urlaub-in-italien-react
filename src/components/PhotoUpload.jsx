@@ -6,7 +6,10 @@ const PhotoUpload = ({ onUpload }) => {
 
   return (
       <div className="photo-upload">
-        <input type="file" multiple onChange={handleFileChange} />
+        <label className="upload-button">
+          Upload Photos
+          <input type="file" multiple accept=".jpg, .jpeg" onChange={handleFileChange} style={{ display: 'none' }} />
+        </label>
       </div>
   );
 };

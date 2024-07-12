@@ -1,5 +1,4 @@
 body {
-    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -8,33 +7,33 @@ body {
     background-color: white;
 }
 
-.trips-container {
+.trips-list-container {
     background-color: white;
-    width: 600px;
     padding: 20px;
     border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 800px;
 }
 
-.header {
+.trips-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
 }
 
-.header h1 {
+.trips-header h1 {
     margin: 0;
 }
 
 .add-trip {
     padding: 5px 10px;
     background-color: white;
-    color: black;
     border-radius: 5px;
     border: solid 1px #ddd;
     cursor: pointer;
     height: 40px;
-    width: 80px;
+    width: 120px;
 }
 
 .add-trip:hover {
@@ -42,41 +41,69 @@ body {
     border: solid 1px #CCF381;
 }
 
-.trip-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.trips-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+    width: 100%;
 }
 
 .trip-item {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    padding: 10px;
-    background-color: white;
     border: 1px solid #ddd;
     border-radius: 5px;
-    transition: background-color 0.3s;
-    /*box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);*/
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+}
+
+.trip-info h2 {
+    margin: 0;
+    font-size: 14px;
 }
 
 .trip-item:hover {
     background-color: #CCF381;
 }
 
-.trip-info h2 {
-    margin: 0;
-    font-size: 18px;
-    color: black;
+.trip-content {
+    width: 148px;
+    height: 148px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.trip-info p {
-    margin: 0;
-    font-size: 14px;
-    color: black;
+.trip-info {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px;
+    text-align: center;
+    z-index: 1;
 }
 
-.trip-arrow span {
-    font-size: 24px;
-    color: black;
+.trip-cover-photo-container {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.trip-cover-photo {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.list-trip-period {
+    display: block;
+    margin-top: 5px;
+    color: #ccc;
+    font-size: 12px;
 }

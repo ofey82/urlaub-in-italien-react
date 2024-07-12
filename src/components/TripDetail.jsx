@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { getTripDetails, uploadPhotos, createStory, updateTrip, updateStory, getStoryDetails } from '../api/api';
+import { getTripDetails, uploadPhotos, createStory, updateTrip, updateStory, getStoryDetails, setCoverPhoto } from '../api/api';
 import PhotoUpload from './PhotoUpload';
 import StoryModal from './StoryModal';
 import { useParams } from "react-router-dom";
 import EditTripModal from "./EditTripModal.jsx";
-import {format, isValid} from 'date-fns';
+import { format, isValid } from 'date-fns';
 import '../styles/TripDetail.css';
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://localhost:8080/';
 
 const TripDetail = () => {
   const { id } = useParams();
@@ -32,12 +32,10 @@ const TripDetail = () => {
   const handlePhotoUpload = (photos) => {
     uploadPhotos(id, photos)
         .then(updatedTrip => {
-
           setTrip(prevTrip => ({
             ...prevTrip,
-            Photos: updatedTrip.Photos // Hier wurde der Fehler korrigiert
+            Photos: updatedTrip.Photos
           }));
-          console.log('Trip after photo upload:', trip);
         })
         .catch(error => console.error('Error uploading photos:', error));
   };
@@ -45,11 +43,11 @@ const TripDetail = () => {
   const handleCreateStory = (updatedStory) => {
     const { title, text } = updatedStory;
     const photoIds = selectedPhotos.map(photo => photo.id);
-    createStory(id, photoIds, title, text) // id = tripId
+    createStory(id, photoIds, title, text)
         .then(newStory => {
           setTrip(prevTrip => ({
             ...prevTrip,
-            Stories: [...prevTrip.Stories, newStory] // Fügen Sie die neue Story zur bestehenden Liste hinzu
+            Stories: [...(prevTrip.Stories || []), newStory]
           }));
           setShowStoryModal(false);
           setSelectedPhotos([]);
@@ -58,13 +56,14 @@ const TripDetail = () => {
   };
 
   const handleEditStory = (updatedStory) => {
-    const { id, title, text } = updatedStory //id = storyId
+    const { id, title, text } = updatedStory;
     updateStory(id, title, text)
-        .then(updatedTrip => {
-          // Aktualisiere den trip State mit den geänderten Story-Daten
+        .then(updatedStory => {
           setTrip(prevTrip => ({
             ...prevTrip,
-            Stories: updatedTrip.Stories
+            Stories: prevTrip.Stories.map(story =>
+                story.id === updatedStory.id ? updatedStory : story
+            )
           }));
           setShowStoryModal(false);
           setCurrentStory(null);
@@ -91,83 +90,99 @@ const TripDetail = () => {
     setShowEditModal(false);
   };
 
+  const handlePhotoClick = (photo) => {
+    const story = (trip.Stories || []).find(story => (story.Photos || []).some(p => p.id === photo.id));
+    if (story) {
+      getStoryDetails(story.id)
+          .then(storyDetails => {
+            setCurrentStory({
+              ...storyDetails,
+              Photos: storyDetails.Photos || []
+            });
+            setShowStoryModal(true);
+          })
+          .catch(error => console.error('Error fetching story details:', error));
+    } else {
+      setCurrentStory(null );
+      setSelectedPhotos([photo]);
+      setShowStoryModal(true);
+    }
+  };
+
+  const handleContextMenu = (event, photo) => {
+    event.preventDefault();
+    setCoverPhoto(id, photo.id)
+        .then(updatedTrip => {
+          setTrip(prevTrip => ({
+            ...prevTrip,
+            coverPhoto: photo.url
+          }));
+        })
+        .catch(error => console.error('Error setting cover photo:', error));
+  };
+
   if (!trip) return <div>Loading...</div>;
 
-  const formattedStartDate = isValid(new Date(trip.startDate)) ? format(new Date(trip.startDate), 'dd.MM.yyyy') : 'Invalid Date';
-  const formattedEndDate = isValid(new Date(trip.endDate)) ? format(new Date(trip.endDate), 'dd.MM.yyyy') : 'Invalid Date';
+  const formattedStartDate = isValid(new Date(trip.startDate)) ? format(new Date(trip.startDate), 'dd.MM.yyyy') : format(new Date(), 'dd.MM.yyyy');
+  const formattedEndDate = isValid(new Date(trip.endDate)) ? format(new Date(trip.endDate), 'dd.MM.yyyy') : format(new Date(), 'dd.MM.yyyy');
 
-  console.log("trip", trip);
+  const highlights = trip.highlights ? trip.highlights.split(',').map(highlight => highlight.trim()) : [];
 
   return (
-      <div className="trip-detail-container">
+      <div className="trip-container">
         <div className="trip-title-container">
           <div className="trip-title">{trip.title}</div>
-          <button className="edit-button" onClick={() => setShowEditModal(true)}>Edit</button>
+          <button className="edit-button" onClick={() => setShowEditModal(true)}>Edit Your Trip</button>
         </div>
-        <div className="trip-details">
-          <div className="trip-period">from {formattedStartDate} until {formattedEndDate}</div>
-          <p>{trip.description}</p>
-        </div>
-        <div className="trip-actions">
-          <PhotoUpload onUpload={handlePhotoUpload}/>
-          <button onClick={() => {
-            setCurrentStory(null);
-            setShowStoryModal(true);
-          }}>Neue Story</button>
-        </div>
-        <div className="trip-content">
-          <div className="photo-grid">
-            {trip.Photos && trip.Photos.map(photo => (
-                <img
-                    key={photo.id}
-                    src={`${API_URL}/${photo.url}`}
-                    alt=""
-                    className={selectedPhotos.some(p => p.id === photo.id) ? 'selected' : ''}
-                    onClick={() =>
-                    {
-                      if (selectedPhotos.some(p => p.id === photo.id)) {
-                        setSelectedPhotos(selectedPhotos.filter(p => p.id !== photo.id));
-                      } else {
-                        setSelectedPhotos([...selectedPhotos, photo]);
-                      }
-                    }}
-                />
-            ))}
+        <div className="trip-info-container">
+          <div className="trip-period-participant-container">
+            <div className="trip-period">
+              <span className="trip-icon-period"><i className="fa-solid fa-calendar-days"></i></span>
+              <span className="trip-date">{formattedStartDate} - {formattedEndDate}</span>
+            </div>
+            <div className="trip-participant">
+              <span className="trip-icon-participant"><i className="fa-solid fa-user-group"></i></span>
+              <span className="trip-icon-participant">{trip.participants}</span>
+            </div>
           </div>
-          <div className="story-list">
-            {trip.Stories && trip.Stories.map(story => (
-                <div key={story.id} className="story-item" onClick={() => {
-                  getStoryDetails(story.id)
-                      .then(storyDetails => {
-                        setCurrentStory({
-                          ...storyDetails,
-                          photos: storyDetails.Photos || []
-                        });
-                        setShowStoryModal(true);
-                      })
-                      .catch(error => console.error('Error fetching story details:', error));
-                }}>
-                  <div className="story-details">
-                    <p className="story-title">{story.title}</p>
-                    <p className="story-text">{story.text}</p>
-                  </div>
-                  <div className="story-photos">
-                    {story.Photos && story.Photos.length > 0 ? (
-                        story.Photos.map(photo => (
-                            <img key={photo.id} src={`${API_URL}/${photo.url}`} alt="Story Photo" />
-                        ))
-                    ) : (
-                        <p>Keine Fotos</p>
+          <div className="trip-description-container">
+            <div className="trip-description">{trip.description}</div>
+            <div className="trip-highlights">
+              {highlights.map((highlight, index) => (
+                  <p key={index} className="highlight">#{highlight}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="trip-actions-container">
+          <PhotoUpload onUpload={handlePhotoUpload} />
+        </div>
+        <div className="trip-content-container">
+          <div className="photo-grid">
+            {trip.Photos && trip.Photos.map(photo => {
+              const story = (trip.Stories || []).find(story => (story.Photos || []).some(p => p.id === photo.id));
+              return (
+                  <div key={photo.id} className="photo-item" onContextMenu={(e) => handleContextMenu(e, photo)}>
+                    <img
+                        src={`${API_URL}${photo.url}`}
+                        alt=""
+                        className={selectedPhotos.some(p => p.id === photo.id) ? 'selected' : ''}
+                        onClick={() => handlePhotoClick(photo)}
+                    />
+                    {story && (
+                        <div className="photo-icon" onClick={() => handlePhotoClick(photo)}>
+                          <i className="far fa-comment-dots"></i>
+                        </div>
                     )}
                   </div>
-                </div>
-            ))}
+              );
+            })}
           </div>
         </div>
         {showStoryModal && (
             <StoryModal
                 story={currentStory}
-                photos={currentStory ? currentStory.photos : selectedPhotos}
+                photos={currentStory ? currentStory.Photos : selectedPhotos}
                 onSave={currentStory ? handleEditStory : handleCreateStory}
                 onClose={handleCloseStoryModal}
             />

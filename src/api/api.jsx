@@ -3,7 +3,6 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8080/api';
 
 
-
 // TRIPS
 export const createTrip = async (tripData) => {
   const response = await axios.post(`${API_URL}/trip`, tripData);
@@ -26,7 +25,17 @@ export const getTrips = async () => {
 
 export const getTripDetails = async (tripId) => {
   const response = await axios.get(`${API_URL}/trip/${tripId}`);
+  console.log("response get trip", response.data);
   return response.data;
+};
+
+export const setCoverPhoto = async (tripId, photoId) => {
+  try {
+    const response = await axios.put(`${API_URL}/trip/${tripId}/cover-photo`, { photoId });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // PHOTOS
@@ -65,7 +74,6 @@ export const createStory = async (tripId, photos, title, text) => {
     title,
     text
   });
-  console.log("Response",response.data);
   return response.data;
 };
 
